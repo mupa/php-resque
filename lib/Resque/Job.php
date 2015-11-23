@@ -267,8 +267,15 @@ class Resque_Job
 			$name[] = 'ID: ' . $this->payload['id'];
 		}
 		$name[] = $this->payload['class'];
-		if(!empty($this->payload['args'])) {
-			$name[] = json_encode($this->payload['args']);
+		if (!empty($this->payload['args'])) {
+			$args = [];
+			foreach ($this->payload['args'] as $key => $arg) {
+				if (empty($arg['logArguments'])) {
+					$arg['arguments'] = '***';
+				}
+				$args[$key] = $arg;
+			}
+			$name[] = json_encode($args);
 		}
 		return '(' . implode(' | ', $name) . ')';
 	}
