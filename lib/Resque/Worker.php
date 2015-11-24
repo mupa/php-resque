@@ -63,7 +63,7 @@ class Resque_Worker
     public function __construct($queues)
     {
         $this->logger = new Resque_Log();
-        
+
         if(!is_array($queues)) {
             $queues = array($queues);
         }
@@ -195,7 +195,9 @@ class Resque_Worker
 			Resque_Event::trigger('beforeFork', $job);
 			$this->workingOn($job);
 
-			$this->child = Resque::fork();
+			// disable forking to avoid errors because of closed stream and database connections
+			//$this->child = Resque::fork();
+			$this->child = false;
 
 			// Forked and we're the child. Run the job.
 			if ($this->child === 0 || $this->child === false) {
