@@ -1,4 +1,6 @@
 <?php
+use Zend\Http\Client\Exception\ExceptionInterface;
+
 /**
  * Resque worker that handles checking queues for jobs, fetching them
  * off the queues, running them and handling the result.
@@ -48,6 +50,16 @@ class Resque_Worker
 	 * @var int Process ID of child worker processes.
 	 */
 	private $child = null;
+
+	/**
+	 * For defined exceptions logging will be disabled if a new job is requeued.
+	 * On last job processing an exception is always be logged.
+	 *
+	 * @var array
+	 */
+	protected $silentExceptions = [
+		ExceptionInterface::class,
+	];
 
     /**
      * Instantiate a new worker, given a list of queues that it should be working
@@ -245,7 +257,23 @@ class Resque_Worker
 			$job->perform();
 		}
 		catch(Exception $e) {
-			$this->logger->log(Psr\Log\LogLevel::CRITICAL, '{job} has failed {stack}', array('job' => $job, 'stack' => $e->getMessage()));
+			$silentException = false;
+			foreach ($this->silentExceptions as $exception) {
+				if ($e instanceof $exception) {
+					$silentException = true;
+					break;
+				}
+			}
+
+			if (!$silentException || !$job->getInstance()->requeueJobOnFailure()) {
+				$this->logger->log(Psr\Log\LogLevel::CRITICAL, '{job} has failed {retryCounter}x ({retriesLeft}x left): {stack}', array(
+						'job' => $job,
+						'stack' => $e->getMessage(),
+						'retryCounter' => $job->getInstance()->getRetryCounter(),
+						'retriesLeft' => $job->getInstance()->getRetriesOnFailure() - $job->getInstance()->getRetryCounter() + 1,
+				));
+			}
+
 			$job->fail($e);
 			return;
 		}
