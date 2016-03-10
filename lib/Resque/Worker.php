@@ -1,4 +1,5 @@
 <?php
+use C24\FL\Checkout\Payment\Listener\Exception\InstantBankTransferNotCompletedException;
 use Zend\Http\Client\Exception\ExceptionInterface;
 
 /**
@@ -59,6 +60,7 @@ class Resque_Worker
 	 */
 	protected $silentExceptions = [
 		ExceptionInterface::class,
+		InstantBankTransferNotCompletedException::class,
 	];
 
     /**
