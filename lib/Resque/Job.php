@@ -1,4 +1,6 @@
 <?php
+use C24\FL\Environment\Core\Service\EnvironmentService;
+
 /**
  * Resque job.
  *
@@ -272,6 +274,12 @@ class Resque_Job
 			foreach ($this->payload['args'] as $key => $arg) {
 				if (empty($arg['logArguments'])) {
 					$arg['arguments'] = '***';
+					$arg['environmentService'] = '***';
+				} else {
+					$environmentService = unserialize($arg['environmentService']);
+					if ($environmentService instanceof EnvironmentService) {
+						$arg['environmentService'] = $environmentService->getIdentifier();
+					}
 				}
 				$args[$key] = $arg;
 			}
