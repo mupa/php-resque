@@ -53,6 +53,14 @@ class Resque_Worker
 	private $child = null;
 
 	/**
+	 * Memory limit.
+	 * The worker will exit, if limit will be exceeded
+	 *
+	 * @var integer MByte
+	 */
+	private $memoryLimit = 384;
+
+	/**
 	 * For defined exceptions logging will be disabled if a new job is requeued.
 	 * On last job processing an exception is always be logged.
 	 *
@@ -242,6 +250,12 @@ class Resque_Worker
 
 			$this->child = null;
 			$this->doneWorking();
+
+			$mem = memory_get_usage();
+			if ($mem > $this->memoryLimit * 1024 * 1024) {
+				$this->logger->log(Psr\Log\LogLevel::NOTICE, sprintf('Memory limit exceeded %.4f MByte', $mem / 1024 / 1024));
+				$this->shutdown = true;
+			}
 		}
 
 		$this->unregisterWorker();
