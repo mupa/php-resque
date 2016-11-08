@@ -124,6 +124,7 @@ class Resque_Redis
 			$persistent = isset($options['persistent']) ? $options['persistent'] : '';
 
 			$this->driver = new Credis_Client($host, $port, $timeout, $persistent);
+			$this->driver->setMaxConnectRetries(3);
 			if ($password){
 				$this->driver->auth($password);
 			}
