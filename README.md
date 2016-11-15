@@ -2,6 +2,7 @@ php-resque: PHP Resque Worker (and Enqueue) [![Build Status](https://secure.trav
 ===========================================
 
 ## Pull from original ##
+```bash
 PULLDIR=tmppull_`date +"%Y%m%d%H%M%S"`
 git clone ssh://git@bitbucket.check24.de:7999/fg/fork-php-resque.git ${PULLDIR}
 cd ${PULLDIR}
@@ -14,6 +15,7 @@ git push origin --tags
 git remote remove source
 cd ..
 rm -Rf ${PULLDIR}
+```
 ===========================================
 
 Resque is a Redis-backed library for creating background jobs, placing
