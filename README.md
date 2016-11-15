@@ -16,7 +16,6 @@ git remote remove source
 cd ..
 rm -Rf ${PULLDIR}
 ```
-===========================================
 
 Resque is a Redis-backed library for creating background jobs, placing
 those jobs on one or more queues, and processing them later.
