@@ -272,7 +272,7 @@ class Resque_Worker
 			Resque_Event::trigger('afterFork', $job);
 			$job->perform();
 		}
-		catch(Exception $e) {
+		catch (Throwable $e) {
 			$silentException = false;
 			foreach ($this->silentExceptions as $exception) {
 				if ($e instanceof $exception) {

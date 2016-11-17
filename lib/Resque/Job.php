@@ -220,7 +220,7 @@ class Resque_Job
 	/**
 	 * Mark the current job as having failed.
 	 *
-	 * @param $exception
+	 * @param Throwable $exception
 	 */
 	public function fail($exception)
 	{

@@ -24,7 +24,8 @@ class Resque_Failure_Redis implements Resque_Failure_Interface
 		$data->payload = $payload;
 		$data->exception = get_class($exception);
 		$data->error = $exception->getMessage();
-		$data->backtrace = explode("\n", $exception->getTraceAsString());
+        // produce ERR: Expected array for frame XX
+        //$data->backtrace = @explode("\n", $exception->getTraceAsString());
 		$data->worker = (string)$worker;
 		$data->queue = $queue;
 		$data = json_encode($data);
